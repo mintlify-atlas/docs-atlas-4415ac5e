@@ -1,0 +1,124 @@
+---
+title: "Markdown Export: Frontmatter, Code Blocks, and Math"
+description: "Export ChatGPT conversations to .md files with YAML frontmatter, syntax-highlighted code, LaTeX math, and web-browsing citation footnotes."
+---
+
+The Markdown export produces a standard `.md` file that opens in any text editor or Markdown-aware app. Each conversation becomes a document with an optional YAML frontmatter block, a top-level heading for the title, and alternating `#### You:` / `#### ChatGPT:` sections for every turn. Code blocks, LaTeX formulas, images, and web-browsing citations are all preserved in their native Markdown syntax.
+
+## File structure
+
+A typical exported file looks like this:
+
+```markdown
+---
+title: ChatGPT Exporter Creation
+source: https://chatgpt.com/c/cf3f8850-1d69-43c8-b99b-affd0de4e76f
+author: ChatGPT
+---
+
+# ChatGPT Exporter Creation
+
+#### You:
+I'm creating a ChatGPT Exporter. What do you think?
+
+#### ChatGPT:
+It sounds like you're planning on creating a tool that uses the ChatGPT model
+to export text. ChatGPT is a large language model trained by OpenAI that is
+designed to generate human-like text responses based on a given input.
+```
+
+### Turn headings
+
+Every message uses a level-4 heading (`####`) to identify the speaker:
+
+- `#### You:` — messages you sent
+- `#### ChatGPT:` — assistant responses
+- `#### Plugin (name):` — output from tool calls (e.g., DALL·E image results, code execution output)
+
+### Frontmatter
+
+The YAML frontmatter block at the top of the file is generated from your configured [Metadata](/features/metadata) fields. If no metadata fields are configured, the frontmatter block is omitted entirely. You can add any field you like — common ones include `title`, `source`, `date`, `model`, and custom tags.
+
+<Note>
+  Frontmatter is controlled by the **Metadata** feature in Settings. See [Metadata](/features/metadata) for the full list of supported placeholder variables like `{title}`, `{source}`, `{model}`, and `{create_time}`.
+</Note>
+
+## Code blocks
+
+Code blocks in ChatGPT responses are preserved exactly as fenced code blocks with the language tag intact:
+
+```markdown
+#### ChatGPT:
+Here's a Python example:
+
+```python
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+```
+```
+
+## LaTeX math
+
+Mathematical formulas written with LaTeX notation in ChatGPT's responses are converted to standard Markdown math syntax:
+
+- Inline formulas using `\(...\)` are converted to `$...$`
+- Display formulas using `\[...\]` are converted to `$$...$$`
+
+The exporter takes care to protect LaTeX inside code blocks from being altered.
+
+```markdown
+#### ChatGPT:
+The quadratic formula is $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
+
+The integral of a constant:
+
+$$\int_a^b c \, dx = c(b - a)$$
+```
+
+## Web-browsing citations
+
+When ChatGPT uses web browsing to answer a question, it includes citations. The Markdown exporter transforms these into proper Markdown links:
+
+**Old-style footnote citations** (e.g., `【11†(PrintWiki)】`) are converted to Markdown footnote references:
+
+```markdown
+The term was first coined in 1987[^11].
+
+[^11]: PrintWiki
+```
+
+**New-style content references** (e.g., `citeturn1search1` Unicode markers) are replaced with inline Markdown links:
+
+```markdown
+According to recent research ([Example Source](https://example.com), [Another Source](https://another.com)), ...
+```
+
+## Timestamps
+
+When you enable timestamps in Settings, each message turn includes an HTML `<time>` element directly below the speaker heading:
+
+```markdown
+#### ChatGPT:
+<time datetime="2024-01-15T14:30:00.000Z" title="1/15/2024, 2:30:00 PM">02:30 PM</time>
+
+Here is the response...
+```
+
+<Note>
+  Timestamps are opt-in. Enable them in **Settings → Timestamp** and choose between 12-hour and 24-hour format. Markdown timestamp display is controlled independently from the HTML export timestamp setting. See [Timestamps](/features/timestamps) for more details.
+</Note>
+
+## Images and multimodal content
+
+- **DALL·E generated images** appear as `![image](asset_url)` links
+- **Uploaded images** appear as `![image](asset_pointer_url)` links
+- **Audio transcriptions** appear as `[audio] transcribed text`
+- **Audio or video asset pointers** are omitted (no readable text to include)
+
+## TavernAI / SillyTavern note
+
+If you need a `.jsonl` file formatted for TavernAI or SillyTavern, use the **JSON → JSONL (TavernAI, SillyTavern)** export instead. See [JSON](/formats/json) for details on the JSONL format.
+
+## Bulk export
+
+When using **Export All**, each conversation is exported as a separate `.md` file inside a ZIP archive. Duplicate file names are automatically disambiguated by appending a counter: `filename (2).md`.

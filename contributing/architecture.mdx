@@ -1,0 +1,130 @@
+---
+title: "ChatGPT Exporter architecture and module guide"
+description: "How ChatGPT Exporter is built: Vite, Preact, and vite-plugin-monkey, plus a guide to every key source module including script injection, exporters, and the UI."
+---
+
+ChatGPT Exporter is a browser userscript — a single JavaScript file that runs inside ChatGPT's page context. The source is written in TypeScript with Preact for UI, compiled by Vite using `vite-plugin-monkey`, and distributed as `dist/chatgpt.user.js`. Understanding the architecture makes it straightforward to trace the path from a user clicking "Export" to a file appearing in their downloads folder.
+
+## Technology stack
+
+<CardGroup cols={2}>
+
+  <Card title="Vite + TypeScript" icon="bolt">
+    Vite handles bundling and dev-server hot reload. TypeScript provides type safety across the entire codebase. The compiler is run in check-only mode (`tsc --noEmit`) as the test step.
+  </Card>
+
+  <Card title="Preact" icon="code">
+    Preact provides the component model for the UI. `@preact/preset-vite` configures JSX to compile to Preact's `h()` calls. React-compatible libraries (`react-i18next`, `@radix-ui/*`) work via Preact's compatibility layer.
+  </Card>
+
+  <Card title="vite-plugin-monkey" icon="puzzle">
+    `vite-plugin-monkey` wraps the Vite build to emit a userscript file with a `==UserScript==` metadata block. It handles the dev-server install popup and `GM_*` API access during development.
+  </Card>
+
+  <Card title="sentinel-js" icon="eye">
+    `sentinel-js` watches the DOM for elements matching CSS selectors. The script uses it to detect when ChatGPT renders its `<nav>` element so the menu can be injected without polling manually.
+  </Card>
+
+</CardGroup>
+
+## Directory structure
+
+```
+src/
+├── main.tsx          # Entry point — injects the Menu into ChatGPT's nav
+├── api.ts            # Fetches conversations from ChatGPT's internal API
+├── constants.ts      # Storage keys and base URL mapping
+├── i18n.ts           # i18next initialisation and locale registration
+├── page.ts           # Helpers for reading the current URL / page state
+├── type.ts           # Shared TypeScript types
+├── style.css         # Global styles for the injected UI
+├── exporter/         # One file per export format
+│   ├── html.ts
+│   ├── image.ts
+│   ├── json.ts
+│   ├── markdown.ts
+│   └── text.ts
+├── hooks/            # Preact hooks (useGMStorage, useTitle, useWindowResize)
+├── locales/          # i18n translation JSON files (one per language)
+├── ui/               # Preact components
+│   ├── Menu.tsx
+│   ├── MenuItem.tsx
+│   ├── ExportDialog.tsx
+│   ├── SettingDialog.tsx
+│   ├── SettingContext.tsx
+│   └── ...
+└── utils/            # Pure utility functions
+    ├── download.ts   # File download + filename template resolution
+    ├── markdown.ts   # Markdown parsing helpers
+    ├── queue.ts      # Rate-limited request queue
+    ├── storage.ts    # GM_getValue / GM_setValue wrapper
+    └── utils.ts      # Date formatting and miscellaneous helpers
+```
+
+## Key modules
+
+### `src/main.tsx` — entry point
+
+`main.tsx` is the script's entry point. It runs after the page loads (`onloadSafe`) and does two things:
+
+1. **Injects the export menu into ChatGPT's `<nav>` element.** It uses `sentinel.on('nav', ...)` to wait for the nav to appear, then prepends a container `<div>` into the sticky-bottom section of the nav. A `setInterval` loop re-injects the menu if the nav is replaced (which ChatGPT does on some navigations).
+
+2. **Injects timestamps into conversation messages.** When the URL changes to a new conversation (`[role="presentation"]` appears), it fetches the conversation from the API and inserts `<time>` elements next to each message.
+
+### `src/api.ts` — ChatGPT API client
+
+`api.ts` exposes functions that call ChatGPT's internal `backend-api`. The base URL is resolved from the current page origin, supporting `chat.openai.com`, `chatgpt.com`, and the third-party `new.oaifree.com`. Key exports:
+
+- `fetchConversation(id, withDetails)` — fetches a single conversation by ID.
+- `fetchAllConversations(projectId, limit, onBatch)` — paginates through all conversations up to `limit`, calling `onBatch` for each page.
+- `fetchProjects()` — returns the list of ChatGPT projects.
+- `archiveConversation(id)` and `deleteConversation(id)` — manage conversations.
+
+### `src/exporter/` — format-specific exporters
+
+Each file in `src/exporter/` handles one output format. All exporters accept the filename format string and an optional metadata list, resolve them via `getFileNameWithFormat`, then trigger a browser download.
+
+| File | Function(s) exported | Output |
+|---|---|---|
+| `markdown.ts` | `exportToMarkdown`, `exportAllToMarkdown` | `.md` file |
+| `html.ts` | `exportToHtml`, `exportAllToHtml` | `.html` file |
+| `json.ts` | `exportToJson`, `exportToOoba`, `exportToTavern`, `exportAllToJson`, `exportAllToOfficialJson` | `.json` / `.jsonl` files, optionally zipped |
+| `text.ts` | `exportToText` | Copies plain text to clipboard |
+| `image.ts` | `exportToPng` | `.png` screenshot via `html2canvas` |
+
+### `src/ui/` — Preact components
+
+| Component | Description |
+|---|---|
+| `Menu.tsx` | Top-level component rendered into the nav. Renders all menu items and opens the appropriate dialog on click. Wraps everything in `SettingProvider`. |
+| `MenuItem.tsx` | A single clickable item in the export menu, with an icon, label, and optional success-state text. |
+| `ExportDialog.tsx` | The "Export All" dialog. Fetches the conversation list from the API, renders the project selector and conversation checklist, and triggers batch exports. |
+| `SettingDialog.tsx` | The settings dialog. Reads and writes all settings via `useSettingContext`. |
+| `SettingContext.tsx` | A Preact context that holds all persistent settings and exposes setters. Each value is backed by `useGMStorage`. |
+
+### `src/utils/storage.ts` — script storage
+
+Settings are persisted using Tampermonkey's `GM_getValue` and `GM_setValue` APIs. `storage.ts` exports a `ScriptStorage` singleton that wraps these calls in a synchronous interface. The `useGMStorage` hook in `src/hooks/useGMStorage.ts` wraps `ScriptStorage` in a Preact state hook so components re-render when values change.
+
+## Build output
+
+Running `pnpm build` emits a single file:
+
+```
+dist/chatgpt.user.js
+```
+
+This file starts with a `==UserScript==` metadata block (generated by `vite-plugin-monkey` from the configuration in `vite.config.ts`) followed by the bundled script. `jszip` and `html2canvas` are excluded from the bundle and loaded from jsDelivr CDN via `@require` headers in the metadata block.
+
+```javascript
+// ==UserScript==
+// @name         ChatGPT Exporter
+// @description  Easily export the whole ChatGPT conversation history...
+// @match        https://chat.openai.com/*
+// @match        https://chatgpt.com/*
+// @match        https://new.oaifree.com/*
+// @require      https://cdn.jsdelivr.net/npm/jszip@3.9.1/dist/jszip.min.js
+// @require      https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js
+// ...
+// ==/UserScript==
+```

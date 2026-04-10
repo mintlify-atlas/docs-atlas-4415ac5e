@@ -1,97 +1,58 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "ChatGPT Exporter: Save Your AI Conversations"
+description: "Save, share, and archive ChatGPT conversations using a free Tampermonkey userscript. Supports Markdown, HTML, PNG screenshots, JSON, and plain text export."
 ---
 
-## Setting up
+ChatGPT Exporter is a free, open-source Tampermonkey userscript that enhances the ChatGPT interface with powerful export capabilities. Once installed, a new **Export** button appears in the ChatGPT sidebar, letting you save any conversation — or all your conversations at once — in the format of your choice.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Install Tampermonkey and the userscript in under two minutes
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Export your first conversation immediately after installing
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Export Formats" icon="file-export" href="/formats/overview">
+    Markdown, HTML, PNG, JSON, plain text — choose what works for you
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Bulk Export" icon="layer-group" href="/features/bulk-export">
+    Export hundreds of conversations at once with progress tracking
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Why ChatGPT Exporter?
 
-Everything you need to create world-class documentation.
+ChatGPT doesn't provide a built-in way to export individual conversations in readable formats. ChatGPT Exporter fills that gap — it injects seamlessly into the ChatGPT UI and gives you full control over your conversation history.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+<CardGroup cols={3}>
+  <Card title="5 Export Formats" icon="files">
+    Markdown, HTML, PNG screenshot, JSON, and plain text
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="Bulk Export" icon="box-archive">
+    Export all conversations in one ZIP, with project filtering
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
+  <Card title="9 Languages" icon="language">
+    UI available in English, French, Spanish, Japanese, Chinese, and more
   </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Need inspiration?
+## Get started
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Steps>
+  <Step title="Install Tampermonkey">
+    Install the Tampermonkey browser extension for [Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo), [Firefox](https://addons.mozilla.org/firefox/addon/tampermonkey), or [Edge](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd).
+  </Step>
+  <Step title="Install the userscript">
+    Click **Install** on [Greasy Fork](https://greasyfork.org/scripts/456055-chatgpt-exporter) or install directly from [GitHub](https://raw.githubusercontent.com/pionxzh/chatgpt-exporter/master/dist/chatgpt.user.js).
+  </Step>
+  <Step title="Open ChatGPT">
+    Navigate to [chatgpt.com](https://chatgpt.com) and open any conversation. You'll see the **Export** button in the left sidebar.
+  </Step>
+  <Step title="Export your conversation">
+    Click the **Export** button, choose a format (Markdown, HTML, PNG, JSON, or Text), and the file downloads immediately.
+  </Step>
+</Steps>
+
+<Note>
+  ChatGPT Exporter works with both ChatGPT Free and ChatGPT Plus accounts. It also supports ChatGPT shared/public conversation pages.
+</Note>

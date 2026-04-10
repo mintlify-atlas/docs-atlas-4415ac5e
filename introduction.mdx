@@ -1,0 +1,54 @@
+---
+title: "ChatGPT Exporter: Export Conversations to Any Format"
+description: "ChatGPT Exporter is a free Tampermonkey userscript that adds export buttons to ChatGPT. Save conversations as Markdown, HTML, PNG, JSON, or plain text."
+---
+
+ChatGPT Exporter is a free, open-source Tampermonkey userscript that solves a straightforward problem: ChatGPT has no built-in way to save your conversations in a usable format. Once installed, the script injects an **Export** button directly into the ChatGPT sidebar. From there you can save any conversation — or hundreds of them at once — in the format that suits your workflow.
+
+## Key features
+
+<CardGroup cols={2}>
+  <Card title="5 export formats" icon="file-export" href="/formats/overview">
+    Save conversations as Markdown, HTML, PNG screenshot, JSON, or plain text. Each format preserves code blocks, formatting, and metadata.
+  </Card>
+  <Card title="Bulk export" icon="box-archive" href="/features/bulk-export">
+    Export your entire conversation history in one operation. Filter by project, select specific conversations, and download as a ZIP archive.
+  </Card>
+  <Card title="Timestamps and metadata" icon="clock" href="/features/timestamps">
+    Optionally include message timestamps in 12h or 24h format, plus conversation metadata such as the source URL and author.
+  </Card>
+  <Card title="Customizable filenames" icon="pencil" href="/features/filename-format">
+    Control the naming pattern for exported files using a configurable format string.
+  </Card>
+  <Card title="9 UI languages" icon="language" href="/configuration/localization">
+    The export menu is localized into English, French, Spanish, Japanese, Korean, Turkish, Chinese (Simplified and Traditional), and Indonesian.
+  </Card>
+  <Card title="Free and open source" icon="code-branch">
+    MIT-licensed. No accounts, no telemetry, no subscriptions. The full source is available on GitHub.
+  </Card>
+</CardGroup>
+
+## How it works
+
+ChatGPT Exporter runs as a Tampermonkey userscript — a small JavaScript program that your browser loads alongside any page you visit. When you navigate to `chatgpt.com`, Tampermonkey injects the script into the page, which adds the **Export** button to the sidebar navigation. The script reads conversation data directly from the page and converts it into your chosen format without sending anything to external servers.
+
+<Note>
+  ChatGPT Exporter requires the Tampermonkey browser extension. It works with ChatGPT Free, ChatGPT Plus, and shared/public conversation pages.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Install Tampermonkey and the userscript in under two minutes.
+  </Card>
+  <Card title="Quick start" icon="rocket" href="/quickstart">
+    Export your first conversation immediately after installing.
+  </Card>
+  <Card title="Export formats" icon="files" href="/formats/overview">
+    Learn what each format includes and when to use it.
+  </Card>
+  <Card title="Bulk export" icon="layer-group" href="/features/bulk-export">
+    Export multiple conversations at once with filtering and progress tracking.
+  </Card>
+</CardGroup>

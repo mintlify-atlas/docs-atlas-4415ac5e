@@ -1,0 +1,153 @@
+---
+title: "JSON Export: OpenAI Official, TavernAI JSONL, Ooba"
+description: "Export ChatGPT conversations to three JSON sub-formats: the raw OpenAI API response, TavernAI/SillyTavern JSONL, or a text-generation-webui Ooba JSON file."
+---
+
+The JSON export gives you access to the raw conversation data in three distinct sub-formats. Clicking **JSON** in the export menu opens a dialog where you choose which format you need. Each format targets a different downstream use case — from replaying conversations with the OpenAI API to importing them into AI roleplay tools.
+
+## Choosing a sub-format
+
+When you click **JSON**, a dialog appears with three options:
+
+<Tabs>
+  <Tab title="OpenAI Official Format">
+    **File:** `<name>.json`
+
+    The official format is the raw API response from ChatGPT's backend — the same JSON structure returned by `https://chatgpt.com/backend-api/conversation/[id]`. It is an array of conversation objects, each containing a `mapping` of message nodes.
+
+    This format is compatible with OpenAI's own data export and can be used to replay conversations or process them with custom tooling.
+
+    ```json
+    {
+      "id": "35a1fa05-e928-4c39-8ffa-ca74f75b509f",
+      "title": "AI Turing Test.",
+      "create_time": 1678015311.655875,
+      "mapping": {
+        "4afb9720-3a88-49b1-9309-e2b53d607f34": {
+          "id": "4afb9720-3a88-49b1-9309-e2b53d607f34",
+          "message": {
+            "id": "4afb9720-3a88-49b1-9309-e2b53d607f34",
+            "author": {
+              "role": "user",
+              "metadata": {}
+            },
+            "create_time": 1678015311.656259,
+            "content": {
+              "content_type": "text",
+              "parts": ["write a poem about the Turing test"]
+            },
+            "weight": 1,
+            "metadata": { "timestamp_": "absolute" },
+            "recipient": "all"
+          },
+          "parent": "5c48fa3e-e4ee-4d00-aa66-8fbcb671a358",
+          "children": ["7027f1a5-8bd5-4463-9869-8a1d1db2f9a1"]
+        },
+        "7027f1a5-8bd5-4463-9869-8a1d1db2f9a1": {
+          "id": "7027f1a5-8bd5-4463-9869-8a1d1db2f9a1",
+          "message": {
+            "id": "7027f1a5-8bd5-4463-9869-8a1d1db2f9a1",
+            "author": {
+              "role": "assistant",
+              "metadata": {}
+            },
+            "create_time": 1678185638.890551,
+            "content": {
+              "content_type": "text",
+              "parts": ["In the realm of machines and code..."]
+            },
+            "end_turn": false,
+            "weight": 1,
+            "metadata": {
+              "model_slug": "text-davinci-002-render-sha",
+              "finish_details": { "type": "stop" },
+              "timestamp_": "absolute"
+            },
+            "recipient": "all"
+          },
+          "parent": "4afb9720-3a88-49b1-9309-e2b53d607f34",
+          "children": []
+        }
+      },
+      "moderation_results": [],
+      "current_node": "7027f1a5-8bd5-4463-9869-8a1d1db2f9a1"
+    }
+    ```
+  </Tab>
+  <Tab title="JSONL (TavernAI / SillyTavern)">
+    **File:** `<name>.tavern.jsonl`
+
+    The TavernAI / SillyTavern format is a JSONL file (one JSON object per line). The first line is a header object identifying the user and character names. Every subsequent line is a message turn.
+
+    This format is designed for direct import into [TavernAI](https://github.com/TavernAI/TavernAI) and [SillyTavern](https://github.com/SillyTavern/SillyTavern).
+
+    ```json
+    {"user_name":"You","character_name":"Assistant"}
+    {"name":"You","is_user":true,"is_name":false,"send_date":1678015311.656259,"mes":"write a poem about the Turing test","swipes":["write a poem about the Turing test"],"swipe_id":0}
+    {"name":"Assistant","is_user":false,"is_name":true,"send_date":1678185638.890551,"mes":"In the realm of machines and code...","swipes":["In the realm of machines and code..."],"swipe_id":0}
+    ```
+
+    Each message object contains:
+
+    | Field | Description |
+    |-------|-------------|
+    | `name` | Speaker name — `"You"` or `"Assistant"` |
+    | `is_user` | `true` for user messages, `false` for assistant |
+    | `is_name` | `true` for assistant messages (opposite of `is_user`) |
+    | `send_date` | Unix timestamp (seconds) of the message |
+    | `mes` | The message text |
+    | `swipes` | Array of alternative responses (only the original text is included) |
+    | `swipe_id` | Index into `swipes` currently selected (always `0`) |
+
+    <Note>
+      Only messages with `content_type: "text"` are included in the JSONL export. Multimodal content, tool calls, and system messages are omitted.
+    </Note>
+  </Tab>
+  <Tab title="Ooba (text-generation-webui)">
+    **File:** `<name>.ooba.json`
+
+    The Ooba format is designed for [text-generation-webui](https://github.com/oobabooga/text-generation-webui). It contains a JSON object with two arrays — `internal` (raw pairs) and `visible` (display pairs) — each being an array of `[user_message, assistant_response]` string pairs.
+
+    ```json
+    {
+      "internal": [
+        [
+          "write a poem about the Turing test",
+          "In the realm of machines and code..."
+        ],
+        [
+          "Can you explain the implications?",
+          "The Turing test raises profound questions..."
+        ]
+      ],
+      "visible": [
+        [
+          "write a poem about the Turing test",
+          "In the realm of machines and code..."
+        ],
+        [
+          "Can you explain the implications?",
+          "The Turing test raises profound questions..."
+        ]
+      ]
+    }
+    ```
+
+    When the conversation begins with a non-empty system prompt, it appears as the first element of `internal` using the special marker `<|BEGIN-VISIBLE-CHAT|>` as the user turn. In `visible`, that marker is replaced with an empty string `""`.
+
+    <Note>
+      Only messages with `content_type: "text"` from non-tool authors are included. Messages are paired as `[user, assistant]` turns. Consecutive user-only or assistant-only messages are handled by inserting an empty string for the missing turn.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Bulk export
+
+When using **Export All**, two JSON options are available in the format dropdown:
+
+- **JSON** — downloads a single `chatgpt-export.json` file containing all selected conversations as a JSON array. If a project name is selected, the file is named `chatgpt-export-project-<name>.json`. This uses the OpenAI official format.
+- **JSON (ZIP)** — downloads a ZIP archive containing one individual `.json` file per conversation, each named according to your configured [filename format](/features/filename-format).
+
+<Warning>
+  The TavernAI JSONL and Ooba sub-formats are only available for single-conversation exports via the main export menu. They are not available in the bulk export dialog.
+</Warning>

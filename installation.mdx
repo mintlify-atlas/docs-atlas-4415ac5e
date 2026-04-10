@@ -1,0 +1,103 @@
+---
+title: "Install ChatGPT Exporter on Chrome, Firefox, and Edge"
+description: "Install the ChatGPT Exporter userscript in two steps: add Tampermonkey to your browser, then install the script from Greasy Fork or GitHub."
+---
+
+ChatGPT Exporter is a userscript, which means it runs inside your browser via a userscript manager rather than as a standalone extension. The installation takes two steps: install the Tampermonkey extension for your browser, then install the ChatGPT Exporter script itself.
+
+## Prerequisites
+
+You need the **Tampermonkey** browser extension installed before you can use ChatGPT Exporter.
+
+<Tabs>
+  <Tab title="Chrome">
+    Install Tampermonkey from the [Chrome Web Store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo). Click **Add to Chrome**, then confirm the prompt.
+  </Tab>
+  <Tab title="Firefox">
+    Install Tampermonkey from [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/tampermonkey). Click **Add to Firefox**, then confirm the prompt.
+  </Tab>
+  <Tab title="Edge">
+    Install Tampermonkey from the [Edge Add-ons store](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd). Click **Get**, then confirm the prompt.
+  </Tab>
+</Tabs>
+
+<Note>
+  Tampermonkey is free and widely used. It manages userscripts safely and lets you update or disable them at any time from the extension icon.
+</Note>
+
+## Install the userscript
+
+Choose one of the two installation methods below. Both install the same script; Greasy Fork is the recommended option for most users because it handles updates automatically.
+
+<Tabs>
+  <Tab title="Greasy Fork (recommended)">
+    <Steps>
+      <Step title="Open the Greasy Fork listing">
+        Go to [https://greasyfork.org/scripts/456055-chatgpt-exporter](https://greasyfork.org/scripts/456055-chatgpt-exporter).
+      </Step>
+      <Step title="Click Install this script">
+        Click the **Install this script** button on the page. Tampermonkey will open a confirmation tab.
+      </Step>
+      <Step title="Confirm the installation">
+        Review the script details in Tampermonkey's confirmation dialog and click **Install**. The tab closes automatically when done.
+      </Step>
+    </Steps>
+
+    <Tip>
+      Greasy Fork automatically notifies you when a new version of the script is published. Tampermonkey can update it with one click.
+    </Tip>
+  </Tab>
+  <Tab title="GitHub (direct)">
+    <Steps>
+      <Step title="Open the raw script URL">
+        Navigate to the direct script URL:
+
+        ```text
+        https://raw.githubusercontent.com/pionxzh/chatgpt-exporter/master/dist/chatgpt.user.js
+        ```
+
+        Tampermonkey intercepts `.user.js` URLs and opens its installation dialog automatically.
+      </Step>
+      <Step title="Confirm the installation">
+        Review the script details and click **Install** in Tampermonkey's dialog.
+      </Step>
+    </Steps>
+
+    <Warning>
+      Scripts installed directly from GitHub do not receive automatic update notifications. You will need to reinstall manually to get newer versions.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Verify the installation
+
+<Steps>
+  <Step title="Open ChatGPT">
+    Navigate to [chatgpt.com](https://chatgpt.com) (or [chat.openai.com](https://chat.openai.com)) and sign in if prompted.
+  </Step>
+  <Step title="Look for the Export button">
+    In the left sidebar, scroll to the bottom of the navigation panel. You should see an **Export** item (with an arrow icon) above the divider. If the sidebar is collapsed, expand it first.
+  </Step>
+  <Step title="Hover to open the export menu">
+    Hover over the **Export** item to open the export format menu. If it appears, the script is installed and running correctly.
+  </Step>
+</Steps>
+
+<Note>
+  If you don't see the Export button, try a hard refresh (`Ctrl+Shift+R` on Windows/Linux, `Cmd+Shift+R` on macOS) or check that Tampermonkey is enabled in your browser's extension settings.
+</Note>
+
+## Browser compatibility
+
+ChatGPT Exporter works in any desktop browser that supports Tampermonkey:
+
+| Browser | Minimum version |
+|---------|-----------------|
+| Chrome  | 88+             |
+| Firefox | 78+             |
+| Edge    | 88+             |
+| Safari  | Use Userscripts app (not Tampermonkey) |
+
+<Warning>
+  Mobile browsers are not officially supported. The export menu may appear on some mobile browsers but layout and functionality are not guaranteed.
+</Warning>

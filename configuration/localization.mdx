@@ -1,0 +1,97 @@
+---
+title: "UI languages and localization in ChatGPT Exporter"
+description: "All nine languages supported by ChatGPT Exporter's UI, how to change the active language in Settings, and how to contribute a new community translation."
+---
+
+ChatGPT Exporter ships with translations for nine languages. The exporter interface — button labels, dialog text, error messages, and setting descriptions — is fully translated for each of them. The language setting affects only the exporter's own UI, never the content of your conversations or exports.
+
+## Supported languages
+
+| Language | Native name | Locale code |
+|---|---|---|
+| English | English | `en-US` |
+| Spanish | Español | `es` |
+| French | Français | `fr` |
+| Indonesian | Indonesia | `id-ID` |
+| Japanese | 日本語 | `ja-JP` |
+| Russian | Русский | `ru` |
+| Turkish | Türkçe | `tr-TR` |
+| Simplified Chinese | 简体中文 | `zh-Hans` |
+| Traditional Chinese | 繁體中文 | `zh-Hant` |
+
+## Automatic language detection
+
+On first run, the exporter selects a language automatically by checking three sources in order:
+
+1. **Saved exporter preference** — a previously chosen language stored in Tampermonkey's script storage (`exporter:language`).
+2. **ChatGPT's own locale** — the `oai/apps/locale` key from ChatGPT's `localStorage`.
+3. **Browser language** — `navigator.language` or the first entry in `navigator.languages`.
+
+If none of these sources produce a supported locale, the exporter falls back to **English (`en-US`)**.
+
+The language detection handles regional variants. For example, `es-MX`, `es-AR`, and `es-CO` all resolve to `es` (Español), and `zh-CN` resolves to `zh-Hans`.
+
+## Changing the language manually
+
+<Steps>
+
+  <Step title="Open Exporter Settings">
+    Click the **Export** button in ChatGPT's left sidebar, then click **Setting** at the top of the menu.
+  </Step>
+
+  <Step title="Select a language">
+    Find the **Language** field at the top of the settings dialog. Click the dropdown and choose your preferred language.
+  </Step>
+
+  <Step title="Save">
+    Click the green **Save** button. The UI updates immediately and your choice is persisted across sessions.
+  </Step>
+
+</Steps>
+
+## Contributing a translation
+
+Translations are stored as JSON files in `src/locales/`. Each file maps English-language keys to translated strings. The English file (`src/locales/en.json`) is the source of truth.
+
+To add a new language or fix an existing translation:
+
+1. Copy `src/locales/en.json` to a new file named with the appropriate locale code (for example, `src/locales/de.json` for German).
+2. Translate the values. Leave the keys unchanged.
+3. Register the locale in `src/i18n.ts`:
+   - Import your JSON file.
+   - Add a locale object to the `LOCALES` array.
+   - Add any regional aliases to the `LanguageMapping` record.
+4. Open a pull request with your changes. See [Contributing guidelines](/contributing/guidelines) for commit and PR conventions.
+
+```json
+// src/locales/de.json (example)
+{
+  "title": "ChatGPT Exporter",
+  "ExportHelper": "Exportieren",
+  "Setting": "Einstellungen",
+  "Language": "Sprache",
+  ...
+}
+```
+
+```typescript
+// src/i18n.ts — add your locale
+import de from './locales/de.json'
+
+const DE = {
+    name: 'Deutsch',
+    code: 'de',
+    resource: de,
+}
+
+export const LOCALES: Locale[] = [
+    EN_US,
+    DE,       // add here
+    ES,
+    ...
+]
+```
+
+<Note>
+  Translation files are community-maintained. If a string is missing from a translation file, the exporter falls back to the English string automatically.
+</Note>

@@ -1,0 +1,67 @@
+---
+title: "Export Formats Overview: Markdown, HTML, JSON, PNG, Text"
+description: "Compare all five ChatGPT Exporter output formats — Markdown, HTML, JSON, PNG, and plain text — and choose the right one for your workflow."
+---
+
+ChatGPT Exporter supports five distinct output formats, each suited to a different use case. Whether you want a portable document for note-taking, a pixel-perfect screenshot to share, structured data to process programmatically, or a quick copy-paste into another app, there is a format built for it.
+
+## Format comparison
+
+| Format | File type | Preserves formatting | Math (KaTeX) | Images | Use case |
+|--------|-----------|---------------------|--------------|--------|----------|
+| Markdown | `.md` | Yes (headings, code, lists) | As `$...$` syntax | As `![image](url)` links | Note-taking, PKM tools, static sites |
+| HTML | `.html` | Yes (full rendering) | Yes (KaTeX) | Yes (embedded) | Archiving, sharing readable files |
+| JSON | `.json` / `.jsonl` | Raw API data | Raw text | Asset pointer URLs | Programmatic processing, AI tool import |
+| PNG | `.png` | Screenshot-accurate | As rendered | As rendered | Sharing images, social media |
+| Text | Clipboard | Plain text only | As raw LaTeX | As `[image]` | Quick pasting into other apps |
+
+## When to use each format
+
+- **Markdown** — Best for note-taking apps like Obsidian, Notion, or Logseq. Frontmatter metadata is supported for custom fields. Timestamp support available.
+- **HTML** — Best when you want a self-contained, shareable file that looks exactly like ChatGPT, including syntax-highlighted code blocks and rendered math.
+- **JSON** — Best for developers who want to process conversations, import them into AI tools like TavernAI, SillyTavern, or text-generation-webui (Ooba), or replay them with the OpenAI API.
+- **PNG** — Best for sharing a screenshot of a conversation without the recipient needing any special software.
+- **Text** — Best when you just need the raw words copied to your clipboard for pasting into an email, document, or chat.
+
+## All formats
+
+<CardGroup cols={2}>
+  <Card title="Markdown" icon="markdown" href="/formats/markdown">
+    Structured `.md` file with YAML frontmatter, code blocks, and LaTeX math
+  </Card>
+  <Card title="HTML" icon="code" href="/formats/html">
+    Self-contained `.html` with embedded CSS, KaTeX math, and syntax highlighting
+  </Card>
+  <Card title="JSON" icon="brackets-curly" href="/formats/json">
+    Three sub-formats: OpenAI official, TavernAI JSONL, and Ooba JSON
+  </Card>
+  <Card title="PNG" icon="image" href="/formats/png">
+    Browser screenshot of the full conversation rendered by html2canvas
+  </Card>
+  <Card title="Plain Text" icon="clipboard" href="/formats/text">
+    Copies the conversation to your clipboard as simple `You: / ChatGPT:` text
+  </Card>
+</CardGroup>
+
+## What every format preserves
+
+All formats process the same underlying conversation tree fetched from the ChatGPT API. They all:
+
+- Skip internal tool messages (except DALL·E image results and code execution output images)
+- Skip hidden "thinking" reasoning steps from reasoning models
+- Skip system prompts marked as visually hidden
+- Identify speakers as **You** (user), **ChatGPT** (assistant), or **Plugin (name)** (tool)
+
+The difference is how richly each format renders the content — from raw clipboard text all the way to a fully styled HTML document.
+
+<Accordion title="Which format should I use for Obsidian?">
+  Use **Markdown**. It produces a standard `.md` file with optional YAML frontmatter you can customize with fields like `title`, `source`, `date`, and more. See [Metadata](/features/metadata) for details.
+</Accordion>
+
+<Accordion title="Which format should I use for TavernAI or SillyTavern?">
+  Use **JSON → JSONL (TavernAI, SillyTavern)**. This produces a `.jsonl` file in the format those tools expect, with a `user_name`/`character_name` header and individual message turns. See [JSON](/formats/json) for a full example.
+</Accordion>
+
+<Accordion title="Can I export all my conversations at once?">
+  Yes. Click **Export All** in the export menu to open the bulk export dialog. You can select individual conversations or all of them, then export to Markdown, HTML, or JSON as a ZIP archive. See [Bulk Export](/features/bulk-export) for details.
+</Accordion>

@@ -1,0 +1,122 @@
+---
+title: "How to contribute to ChatGPT Exporter"
+description: "Conventional Commits format, ESLint and TypeScript check requirements, code style expectations, and how to submit a pull request to ChatGPT Exporter."
+---
+
+Good contributions keep the project easy to maintain over time. This page covers the conventions you need to follow before opening a pull request: how to write commit messages, how to verify your code passes linting and type checks, and how to structure your PR for review.
+
+## Commit message format
+
+ChatGPT Exporter uses the [Conventional Commits](https://www.conventionalcommits.org/) specification. Every commit message must start with a type prefix.
+
+```
+<type>(<optional scope>): <short description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+Common types:
+
+| Type | When to use |
+|---|---|
+| `feat` | A new feature |
+| `fix` | A bug fix |
+| `docs` | Documentation changes only |
+| `refactor` | Code change that neither fixes a bug nor adds a feature |
+| `test` | Changes to type-check or test configuration |
+| `chore` | Maintenance tasks (dependency updates, config changes) |
+| `style` | Formatting, whitespace — no logic changes |
+| `perf` | Performance improvement |
+
+**Examples:**
+
+```
+feat(exporter): add CSV export format
+fix(ui): prevent settings dialog from closing on overlay click
+docs: document localization contribution process
+chore: update pnpm to 8.15.0
+```
+
+Commit message compliance is enforced by `commitlint` using `@commitlint/config-conventional`. A `husky` pre-commit hook runs `lint-staged` on staged `.ts`/`.tsx` files before the commit is created.
+
+<Note>
+  Always mention the related GitHub issue number in your commit message or PR description. For example: `fix(api): handle 429 rate limit responses (#123)`.
+</Note>
+
+## Code quality checks
+
+Before opening a pull request, run both checks locally and make sure they pass.
+
+### Type checking
+
+```bash
+pnpm run test
+```
+
+This runs `tsc --noEmit`, which checks the entire codebase for TypeScript type errors without emitting any output files. A clean run produces no output.
+
+### Linting
+
+```bash
+pnpm run lint
+```
+
+This runs ESLint across the project. To auto-fix any automatically fixable issues:
+
+```bash
+pnpm run lint:fix
+```
+
+<Warning>
+  Do not submit a PR with type errors or ESLint errors. The CI pipeline will catch them, but fixing them before opening the PR saves review time.
+</Warning>
+
+## Code style expectations
+
+- **TypeScript** — Use explicit types for function parameters and return values. Avoid `any`.
+- **Preact/React** — Prefer hooks over class components. Keep components focused — extract logic into custom hooks.
+- **Imports** — Group imports: external libraries, then internal modules. The ESLint config enforces import ordering.
+- **Naming** — Use camelCase for variables and functions, PascalCase for components and types, SCREAMING_SNAKE_CASE for constants.
+- **No magic strings** — Use the constants defined in `src/constants.ts` for storage keys and URLs.
+
+## Submitting a pull request
+
+<Steps>
+
+  <Step title="Make sure your branch is up to date">
+    Rebase onto the latest `master` before opening your PR to avoid merge conflicts:
+
+    ```bash
+    git fetch origin
+    git rebase origin/master
+    ```
+  </Step>
+
+  <Step title="Run all checks">
+    ```bash
+    pnpm run test
+    pnpm run lint
+    ```
+
+    Both commands must complete without errors.
+  </Step>
+
+  <Step title="Open the pull request">
+    Push your branch and open a PR against `master` on the upstream repository. In the PR description:
+
+    - Summarize what the change does and why.
+    - Link the relevant issue (e.g., `Closes #123`).
+    - Include screenshots or a short screen recording if the change affects the UI.
+  </Step>
+
+  <Step title="Respond to review feedback">
+    Address reviewer comments with new commits on the same branch. Do not force-push after the PR is open unless a reviewer specifically asks you to rebase.
+  </Step>
+
+</Steps>
+
+## Development setup
+
+If you haven't set up your local environment yet, see [Development environment setup](/contributing/setup) for step-by-step instructions.

@@ -1,0 +1,94 @@
+---
+title: "Set up a local ChatGPT Exporter development environment"
+description: "Step-by-step guide to fork, clone, and run ChatGPT Exporter locally with Node.js and pnpm, plus a reference for all available npm scripts."
+---
+
+ChatGPT Exporter is built with Vite and compiled into a single userscript file via `vite-plugin-monkey`. The development workflow uses a local Vite server that serves a test page with an install prompt, so you can load the script into Tampermonkey without building a release first.
+
+## Prerequisites
+
+- **Node.js** >= 20.0.0
+- **pnpm** package manager (the project uses `pnpm@8.14.1` — any compatible 8.x release works)
+
+<Tip>
+  Install pnpm with `npm install -g pnpm` or follow the [official pnpm installation guide](https://pnpm.io/installation).
+</Tip>
+
+## Setting up the project
+
+<Steps>
+
+  <Step title="Fork the repository">
+    Click **Fork** on the [chatgpt-exporter GitHub page](https://github.com/pionxzh/chatgpt-exporter) to create your own copy, then clone it locally:
+
+    ```bash
+    git clone https://github.com/<your-username>/chatgpt-exporter.git
+    cd chatgpt-exporter
+    ```
+  </Step>
+
+  <Step title="Create a feature branch">
+    Always work on a branch, not directly on `master`:
+
+    ```bash
+    git checkout -b feat/my-feature
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    pnpm install
+    ```
+
+    This installs all runtime and development dependencies from the lockfile.
+  </Step>
+
+  <Step title="Start the development server">
+    ```bash
+    pnpm dev
+    ```
+
+    Vite starts a local development server and automatically opens a browser tab at `http://localhost:5173` (or the next available port). The page displays a Tampermonkey install prompt.
+  </Step>
+
+  <Step title="Install the development script">
+    Click **Install** on the Tampermonkey popup that appears in the opened browser tab. This installs the development build of the script into Tampermonkey, pointed at your local Vite server.
+
+    <Note>
+      The development script loads code live from your local Vite server. Any change you save in your editor triggers a hot module reload — you only need to refresh the ChatGPT page to see your changes, without reinstalling the script.
+    </Note>
+  </Step>
+
+  <Step title="Open ChatGPT and verify the script is running">
+    Navigate to [chatgpt.com](https://chatgpt.com). The **Export** button should appear in the left sidebar. Open the browser console and confirm you see:
+
+    ```
+    [Exporter] Loaded
+    ```
+  </Step>
+
+</Steps>
+
+## Available scripts
+
+All scripts are run with `pnpm run <script>` (or `pnpm <script>` for scripts without a colon).
+
+| Script | Command | Description |
+|---|---|---|
+| `dev` | `vite` | Starts the Vite dev server with hot reload |
+| `build` | `vite build` | Produces `dist/chatgpt.user.js`, the release userscript |
+| `test` | `tsc --noEmit` | Runs the TypeScript compiler to check for type errors without emitting files |
+| `lint` | `eslint .` | Runs ESLint across the entire project |
+| `lint:fix` | `eslint . --fix` | Runs ESLint and auto-fixes fixable issues |
+
+<Note>
+  There is no separate test runner. `pnpm run test` is a type-check-only step using the TypeScript compiler. Always run both `pnpm run test` and `pnpm run lint` before opening a pull request.
+</Note>
+
+## Building a release
+
+```bash
+pnpm build
+```
+
+The compiled userscript is written to `dist/chatgpt.user.js`. This file includes the userscript metadata block at the top and all dependencies inlined except for `jszip` and `html2canvas`, which are loaded from jsDelivr CDN at runtime.

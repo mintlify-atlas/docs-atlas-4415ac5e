@@ -1,0 +1,100 @@
+---
+title: "Add Custom Frontmatter Metadata to Markdown Exports"
+description: "Embed structured key-value pairs as YAML frontmatter in every Markdown export, using dynamic template variables like title, date, model, and source URL."
+---
+
+Export metadata lets you attach structured information to the top of every Markdown file you export. The metadata is written as YAML frontmatter — a block of `key: value` pairs enclosed by `---` delimiters — and is recognized by tools like Obsidian, Jekyll, Hugo, and most static site generators. You define the keys and values yourself, and can use template variables that are resolved automatically at export time.
+
+<Note>
+  Export metadata applies only to Markdown exports. HTML exports show metadata in a collapsible `<details>` block, but the key-value pairs configured here drive both.
+</Note>
+
+## How to configure metadata
+
+<Steps>
+  <Step title="Open Settings">
+    Click the **Settings** button in the ChatGPT Exporter menu to open the **Exporter Settings** dialog.
+  </Step>
+  <Step title="Enable Export Metadata">
+    Toggle the **Export Metadata** switch to the on position. The metadata editor appears with two default entries: `title` mapped to `{title}` and `source` mapped to `{source}`.
+  </Step>
+  <Step title="Edit key-value pairs">
+    Each row in the editor has two text fields separated by an arrow (`→`):
+
+    - The **left field** is the frontmatter key (e.g., `title`, `author`, `tags`).
+    - The **right field** is the value, which can include static text or any of the available template variables.
+
+    Edit either field directly. Click the trash icon at the end of a row to remove it.
+  </Step>
+  <Step title="Add new entries">
+    Click the **+** button below the list to add a new blank key-value row.
+  </Step>
+  <Step title="Save">
+    Click **Save**. Your metadata configuration is stored in userscript storage and used in every subsequent Markdown export.
+  </Step>
+</Steps>
+
+## Available template variables
+
+Use these variables in the **value** field. They are replaced with real data when you export a conversation.
+
+| Variable | Resolved value | Example |
+|----------|---------------|---------|
+| `{title}` | The conversation title (sanitized for filenames) | `My_Conversation` |
+| `{date}` | Today's date | `2024-01-15` |
+| `{timestamp}` | Current Unix timestamp | `1705358400` |
+| `{source}` | Full URL of the conversation | `https://chatgpt.com/c/abc123` |
+| `{model}` | Display name of the model | `ChatGPT-4` |
+| `{model_name}` | Internal model slug | `gpt-4` |
+| `{create_time}` | When the conversation was created (ISO 8601) | `2024-01-15T10:30:00.000Z` |
+| `{update_time}` | When the conversation was last updated (ISO 8601) | `2024-01-15T20:12:00.000Z` |
+
+## Example output
+
+Given the following configuration:
+
+| Key | Value |
+|-----|-------|
+| `title` | `{title}` |
+| `source` | `{source}` |
+| `author` | `ChatGPT` |
+| `created` | `{create_time}` |
+| `model` | `{model}` |
+
+The exported Markdown file begins with:
+
+```markdown
+---
+title: My Conversation Title
+source: https://chatgpt.com/c/abc123
+author: ChatGPT
+created: 2024-01-15T10:30:00.000Z
+model: ChatGPT-4
+---
+
+# My Conversation Title
+
+#### You:
+...
+```
+
+## Tips
+
+<Accordion title="Using metadata with Obsidian">
+  Obsidian reads YAML frontmatter and displays it as document properties. Use `{title}` as your `title` key and `{source}` as a `url` key to link back to the original conversation directly from your notes.
+</Accordion>
+
+<Accordion title="Using metadata with static site generators">
+  Hugo and Jekyll both process YAML frontmatter. You can add any key your theme expects — for example, `date: {date}` for Hugo's date field or `layout: post` as a static value — and the exporter will include it verbatim.
+</Accordion>
+
+<Accordion title="Keys with empty names are skipped">
+  If you leave the key field blank, the exporter ignores that row entirely. Only rows with a non-empty key name appear in the frontmatter output.
+</Accordion>
+
+## Storage keys
+
+| Key | Purpose |
+|-----|---------|
+| `exporter:enable_meta` | Master toggle for export metadata |
+| `exporter:meta_list` | JSON array of `{ name, value }` objects defining the key-value pairs |

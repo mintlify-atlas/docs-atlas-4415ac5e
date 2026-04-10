@@ -1,0 +1,77 @@
+---
+title: "Bulk Export Multiple ChatGPT Conversations at Once"
+description: "Select, filter, and export hundreds of ChatGPT conversations at once as Markdown, HTML, or JSON — with a live progress bar and archive or delete actions."
+---
+
+Bulk export lets you select many conversations at once and download them all in a single operation. Instead of opening each conversation individually, you open the **Export All** dialog, pick your conversations, choose a format, and export them as a ZIP archive containing one file per conversation.
+
+## Two export sources
+
+ChatGPT Exporter can load your conversations from two places:
+
+<CardGroup cols={2}>
+  <Card title="API (live data)" icon="bolt">
+    Fetches your conversations directly from ChatGPT. Select a project or load all conversations, then pick which ones to export.
+  </Card>
+  <Card title="Local file (conversations.json)" icon="upload">
+    Upload the `conversations.json` file you downloaded from OpenAI's official data export. Useful when you want to work offline or with archived data.
+  </Card>
+</CardGroup>
+
+## Bulk export workflow
+
+<Steps>
+  <Step title="Open the Export All dialog">
+    Click the **Export All** button in the ChatGPT Exporter menu. The **Export Conversations** dialog opens.
+  </Step>
+  <Step title="Choose a source">
+    - **API source**: Select a project from the **Select Project** dropdown (or choose **(no project)** to load all conversations). Your conversations load automatically.
+    - **Local source**: Click the upload icon next to the source label and select your `conversations.json` file. The list populates from the uploaded file.
+  </Step>
+  <Step title="Filter and select conversations">
+    Use the search box to filter conversations by title. Then select the ones you want:
+
+    - **Select All** checkbox — selects up to 100 conversations matching the current search filter.
+    - **Last 100** button — quickly selects the 100 most recent conversations.
+    - **Individual checkboxes** — click any conversation to toggle it.
+    - **Shift-click range** — click one conversation, hold Shift, and click another to select every conversation in between.
+
+    The counter in the top-right shows your current selection (e.g., `47/100`). Once you reach the per-batch limit, additional conversations are disabled until you deselect some.
+  </Step>
+  <Step title="Choose an export format">
+    Use the format dropdown at the bottom-left of the dialog to pick one of the available formats:
+
+    | Format | Output |
+    |--------|--------|
+    | **Markdown** | ZIP file containing one `.md` file per conversation |
+    | **HTML** | ZIP file containing one `.html` file per conversation |
+    | **JSON** | Single `.json` file containing all selected conversations as an array |
+    | **JSON (ZIP)** | ZIP file containing one `.json` file per conversation |
+  </Step>
+  <Step title="Export, archive, or delete">
+    Click the action button for what you want to do:
+
+    - **Export** — downloads the selected conversations in the chosen format.
+    - **Archive** — archives the selected conversations in ChatGPT (they disappear from the sidebar and can be managed in ChatGPT settings). Only available when using the API source.
+    - **Delete** — permanently deletes the selected conversations from ChatGPT. Only available when using the API source.
+  </Step>
+  <Step title="Monitor progress">
+    While the export runs, a progress bar appears showing the name of the conversation currently being processed and the count of completed vs. total (e.g., `23/47`). The export finishes automatically and triggers a download when all conversations are processed.
+  </Step>
+</Steps>
+
+## Export limit
+
+By default, each export batch processes up to **100 conversations**. You can raise this limit up to **20,000** in the Settings dialog using the **Export All Limit** slider — increasing the limit allows more conversations to be fetched and shown in the list, though each export action still selects a maximum of 100 at a time.
+
+<Note>
+  The 100-conversation-per-batch cap is enforced in the selection UI. The counter turns red when you reach the limit. To export more than 100 conversations, run multiple batches.
+</Note>
+
+## Output format
+
+Bulk exports for Markdown and HTML always produce a ZIP file (e.g., `chatgpt-export-markdown.zip`). When filtering by project, the ZIP name includes the project name (e.g., `chatgpt-export-markdown-project-my-project.zip`). The ZIP contains one file per conversation, named according to your configured [filename format](/features/filename-format).
+
+<Tip>
+  If two conversations produce the same filename, the exporter automatically appends a counter (e.g., `My_Chat (2).md`) to avoid overwriting files.
+</Tip>

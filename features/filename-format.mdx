@@ -1,0 +1,109 @@
+---
+title: "Customize Exported File Names with Template Variables"
+description: "Control exactly how exported files are named using a template string with variables for conversation title, date, chat ID, timestamps, and more."
+---
+
+By default, every exported file is named `ChatGPT-{title}` — so a conversation titled "My Project Plan" becomes `ChatGPT-My_Project_Plan.md`. The filename format setting lets you change this template to anything that suits your workflow, using a set of variables that are resolved at the moment you export.
+
+The format you configure applies to all export formats (Markdown, HTML, JSON, and PNG). The file extension is appended automatically based on the chosen format.
+
+## Where to configure
+
+<Steps>
+  <Step title="Open Settings">
+    Click the **Settings** button in the ChatGPT Exporter menu to open the **Exporter Settings** dialog.
+  </Step>
+  <Step title="Edit the File Name field">
+    Find the **File Name** section. The input field contains your current format string. Edit it directly.
+  </Step>
+  <Step title="Check the preview">
+    A live **Preview** line beneath the input shows how the filename resolves using the current conversation's actual data. Spaces in the title are replaced with underscores, and special characters are stripped to keep the filename safe.
+  </Step>
+  <Step title="Save">
+    Click **Save**. The new format is stored in userscript storage and used for every subsequent export.
+  </Step>
+</Steps>
+
+## Available variables
+
+| Variable | Description | Example output |
+|----------|-------------|----------------|
+| `{title}` | The conversation title, sanitized and with spaces replaced by underscores | `My_Project_Plan` |
+| `{date}` | The current date at the time of export | `2024-01-15` |
+| `{timestamp}` | The current Unix timestamp at the time of export | `1705358400` |
+| `{chat_id}` | The unique identifier for the conversation | `abc123def456` |
+| `{create_time}` | When the conversation was created, in ISO 8601 format | `2024-01-10T09:00:00.000Z` |
+| `{update_time}` | When the conversation was last updated, in ISO 8601 format | `2024-01-15T20:12:00.000Z` |
+
+## Examples
+
+<Tabs>
+  <Tab title="Default">
+    Format string:
+    ```
+    ChatGPT-{title}
+    ```
+    Result:
+    ```
+    ChatGPT-My_Project_Plan.md
+    ```
+  </Tab>
+  <Tab title="Title and date">
+    Format string:
+    ```
+    {title}_{date}
+    ```
+    Result:
+    ```
+    My_Project_Plan_2024-01-15.md
+    ```
+  </Tab>
+  <Tab title="Date-prefixed (for sorting)">
+    Format string:
+    ```
+    {date}_{title}
+    ```
+    Result:
+    ```
+    2024-01-15_My_Project_Plan.md
+    ```
+  </Tab>
+  <Tab title="With chat ID">
+    Format string:
+    ```
+    {title}_{chat_id}
+    ```
+    Result:
+    ```
+    My_Project_Plan_abc123def456.md
+    ```
+  </Tab>
+</Tabs>
+
+## How variables are resolved
+
+Variable substitution happens inside `getFileNameWithFormat` in `src/utils/download.ts`. The resolution logic works as follows:
+
+1. `{title}` — the conversation title is sanitized using `sanitize-filename` and then all whitespace sequences are collapsed into a single underscore.
+2. `{date}` — calls `dateStr()`, which returns the current date formatted as `YYYY-MM-DD`.
+3. `{timestamp}` — calls `timestamp()`, which returns the current Unix timestamp as a string.
+4. `{chat_id}` — the raw conversation ID from the ChatGPT API. This is empty when exporting all conversations in bulk.
+5. `{create_time}` — the conversation's `create_time` field (a Unix timestamp in seconds) converted to an ISO 8601 string.
+6. `{update_time}` — the conversation's `update_time` field converted to an ISO 8601 string.
+
+The file extension (`.md`, `.html`, `.json`, `.png`) is always appended after substitution. You do not include it in the format string.
+
+<Note>
+  During bulk export, `{chat_id}` resolves to an empty string because the exporter processes many conversations at once and uses the individual conversation ID from each conversation record instead. Use `{title}` or `{create_time}` as the primary differentiator in bulk exports.
+</Note>
+
+<Tip>
+  Use `{date}_{title}` if you want your exported files to sort chronologically by export date in a file manager.
+  Use `{create_time}_{title}` if you want them sorted by when the conversation originally started.
+</Tip>
+
+## Storage key
+
+| Key | Purpose |
+|-----|---------|
+| `exporter:filename_format` | Stores the current filename format string |

@@ -1,0 +1,158 @@
+---
+title: "Exporter Settings: file names, timestamps, metadata"
+description: "A complete reference for every option in the Exporter Settings dialog, including file naming templates, timestamp controls, and metadata configuration."
+---
+
+The **Exporter Settings** dialog gives you fine-grained control over how ChatGPT Exporter names files, formats timestamps, and attaches metadata to exported documents. Open it by clicking the **Export** button in ChatGPT's sidebar and selecting **Setting**.
+
+<AccordionGroup>
+
+  <Accordion title="Language">
+
+    The **Language** setting controls the language of the exporter's UI elements — button labels, dialog text, and status messages. It does not affect the content of your exported conversations.
+
+    **How to change it:** Open **Exporter Settings** and select a language from the dropdown. The UI updates immediately without requiring a page reload.
+
+    Supported languages and their locale codes:
+
+    | Language | Code |
+    |---|---|
+    | English | `en-US` |
+    | Español | `es` |
+    | Français | `fr` |
+    | Indonesia | `id-ID` |
+    | 日本語 | `ja-JP` |
+    | Русский | `ru` |
+    | Türkçe | `tr-TR` |
+    | 简体中文 | `zh-Hans` |
+    | 繁體中文 | `zh-Hant` |
+
+    <Tip>
+      The exporter automatically detects your preferred language on first run by checking your saved exporter preference, then ChatGPT's own locale setting, then your browser language. You only need to set this manually if you want to override the detected language.
+    </Tip>
+
+  </Accordion>
+
+  <Accordion title="File Name">
+
+    The **File Name** setting controls the name of every file the exporter downloads. You write a template string that can include static text and any combination of the template variables below. The file extension is always appended automatically.
+
+    **Default:** `ChatGPT-{title}`
+
+    **Available variables:**
+
+    | Variable | Description | Example |
+    |---|---|---|
+    | `{title}` | Conversation title, sanitized for use as a filename | `My_conversation` |
+    | `{date}` | Current date at export time | `2024-01-15` |
+    | `{timestamp}` | Unix timestamp at export time | `1705312800` |
+    | `{chat_id}` | ChatGPT's internal conversation ID | `abc123...` |
+    | `{create_time}` | ISO 8601 creation time of the conversation | `2024-01-10T12:00:00.000Z` |
+    | `{update_time}` | ISO 8601 last-updated time of the conversation | `2024-01-15T09:30:00.000Z` |
+
+    **How to change it:** Type your desired template directly into the text field. A live **Preview** below the field shows what the filename will look like with real values.
+
+    ```
+    ChatGPT-{title}-{date}
+    → ChatGPT-My_Conversation-2024-01-15.md
+    ```
+
+    <Note>
+      Whitespace in the conversation title is replaced with underscores, and characters that are invalid in filenames are removed automatically.
+    </Note>
+
+  </Accordion>
+
+  <Accordion title="Export All Limit">
+
+    The **Export All Limit** setting sets the maximum number of conversations that the **Export All** dialog will load from the ChatGPT API. Increasing this number lets you see and select more conversations at once but requires more API requests and takes longer to load.
+
+    **Default:** `1000`
+
+    **Range:** `100` to `20,000` in steps of `100`
+
+    **How to change it:** Drag the slider left to lower the limit or right to raise it. The current value is shown to the right of the slider.
+
+    <Warning>
+      Very high limits (10,000+) can take a significant amount of time to load depending on the speed of the ChatGPT API. Start with the default of 1,000 unless you have a specific reason to increase it.
+    </Warning>
+
+  </Accordion>
+
+  <Accordion title="Conversation Timestamp">
+
+    The **Conversation Timestamp** setting controls whether a timestamp is displayed next to each message in the ChatGPT interface and included in exported files.
+
+    **Default:** Off
+
+    **How to change it:** Toggle the switch on the right side of the setting card. When enabled, three sub-options appear:
+
+    | Sub-option | Default | Description |
+    |---|---|---|
+    | **Use 24-hour format** | Off | Shows times as `23:59` instead of `11:59 PM` |
+    | **Enable on HTML** | Off | Includes timestamps in exported HTML files |
+    | **Enable on Markdown** | Off | Includes timestamps in exported Markdown files |
+
+    <Note>
+      Enabling the main toggle shows timestamps live in the ChatGPT interface. The **Enable on HTML** and **Enable on Markdown** sub-options control whether timestamps are also written into exported file content.
+    </Note>
+
+  </Accordion>
+
+  <Accordion title="Export Metadata">
+
+    The **Export Metadata** setting controls whether a metadata block (YAML frontmatter for Markdown, a collapsible `<details>` block for HTML) is prepended to exported files. You can define a list of custom key-value pairs, and each value can contain template variables that are resolved at export time.
+
+    **Default:** Off
+
+    **Default metadata entries (when enabled):**
+
+    ```yaml
+    title: {title}
+    source: {source}
+    ```
+
+    **How to change it:** Toggle the switch on the right side of the setting card. When enabled, you can:
+
+    - **Edit** any existing key or value by typing in its field.
+    - **Add** a new row by clicking the `+` button.
+    - **Remove** a row by clicking the trash icon next to it.
+
+    **Available variables for metadata values:**
+
+    | Variable | Description | Example |
+    |---|---|---|
+    | `{title}` | Conversation title | `My conversation` |
+    | `{date}` | Export date | `2024-01-15` |
+    | `{timestamp}` | Unix timestamp | `1705312800` |
+    | `{source}` | URL of the ChatGPT conversation | `https://chatgpt.com/c/abc123` |
+    | `{model}` | Display name of the model | `ChatGPT-3.5` |
+    | `{model_name}` | Internal model identifier | `text-davinci-002-render-sha` |
+    | `{create_time}` | ISO 8601 creation time | `2023-04-10T21:45:35.027Z` |
+    | `{update_time}` | ISO 8601 last-updated time | `2023-04-10T21:45:35.027Z` |
+
+    **Example output in a Markdown export:**
+
+    ```markdown
+    ---
+    title: My conversation
+    source: https://chatgpt.com/c/abc123
+    model: ChatGPT-4o
+    date: 2024-01-15
+    ---
+
+    # My conversation
+    ...
+    ```
+
+    <Note>
+      Metadata is only written to Markdown and HTML exports. It does not appear in JSON, plain text, or PNG exports.
+    </Note>
+
+  </Accordion>
+
+</AccordionGroup>
+
+## Saving your settings
+
+Click the green **Save** button at the bottom of the dialog to close it and persist your changes. All settings are stored using Tampermonkey's built-in storage (`GM_setValue`) so they survive page refreshes and browser restarts.

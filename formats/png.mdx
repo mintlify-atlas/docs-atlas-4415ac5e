@@ -1,0 +1,54 @@
+---
+title: "PNG Export: Browser Screenshot of Your Conversation"
+description: "Export a ChatGPT conversation as a PNG image using html2canvas. Captures the rendered DOM at 2x resolution with dark and light mode support."
+---
+
+The PNG export takes a screenshot of the full conversation as it is currently rendered in your browser and saves it as a `.png` file. It is the fastest way to share a conversation visually — no special software is needed to view the result.
+
+## How it works
+
+The exporter uses [html2canvas](https://html2canvas.hertl.me/) to render the conversation thread DOM into an HTML `<canvas>` element, then converts that canvas to a PNG data URL and triggers a download.
+
+Before capturing, the exporter injects a temporary `<style>` block that:
+
+- Sets explicit background and text colors matching the current dark or light theme
+- Hides non-conversation UI elements (the page header, the input area, the back-to-top button, action bars, and code block copy buttons)
+- Adjusts `pre` and `img` display properties to work around known html2canvas rendering quirks
+
+After the screenshot is taken, the injected styles are removed and the page is restored to its normal state.
+
+## Dark and light mode
+
+The exporter detects whether ChatGPT is in dark mode by checking `document.documentElement.classList.contains('dark')` at the moment you click **Screenshot**. It then applies the corresponding background color (`#212121` for dark, `#fff` for light) to the captured element. The result accurately reflects what you see on screen.
+
+## Resolution
+
+The PNG is captured at twice the device pixel ratio (2× `window.devicePixelRatio`) to produce a crisp, high-resolution image. On a standard 1× display this means 2× pixel density; on a Retina/HiDPI display it means 4× or more.
+
+## Mathematical formulas
+
+Because the PNG export captures the live DOM, mathematical formulas that have already been rendered by KaTeX in the browser appear correctly as typeset math in the image — no post-processing is needed.
+
+## Limitations
+
+<Warning>
+  The PNG export only captures what is currently rendered in the DOM. A few important constraints apply:
+
+  - **Very long conversations** may hit the browser's maximum canvas size limit (typically around 16,384 px in height on Chrome). If this happens, the exporter automatically retries with a progressively reduced scale factor (up to 10 attempts). If all retries fail, an error alert is shown and no file is downloaded.
+  - **Shadow DOM elements** are ignored by html2canvas. Any content rendered inside a shadow root will not appear in the exported image. This is a known html2canvas limitation.
+  - **External images** are loaded with `useCORS: true`. Images hosted on servers that do not send CORS headers may not appear in the export.
+  - **Bulk export** is not supported for PNG. Each PNG must be exported individually.
+</Warning>
+
+## File naming
+
+The PNG file is named using your configured [filename format](/features/filename-format). Because the PNG export only uses the current page state — not a full API fetch — some variables have limited data:
+
+- `{chat_id}` — the conversation ID from the current URL (accurate)
+- `{title}` — resolved from the browser tab title (`document.title`) rather than the API conversation title
+- `{create_time}` and `{update_time}` — resolve to the current export time, not the actual conversation timestamps
+- `{date}` and `{timestamp}` — current date and time at export (always accurate)
+
+<Tip>
+  For very long conversations, consider using the HTML export instead. It preserves all formatting and is not subject to canvas size limits. See [HTML](/formats/html) for details.
+</Tip>

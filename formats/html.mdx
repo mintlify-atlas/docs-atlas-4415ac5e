@@ -1,0 +1,81 @@
+---
+title: "HTML Export: Self-Contained File with KaTeX and Themes"
+description: "Export ChatGPT conversations to a portable .html file with embedded CSS, KaTeX math, syntax-highlighted code blocks, and dark/light mode support."
+---
+
+The HTML export produces a single `.html` file that contains everything needed to display the conversation — CSS styles, syntax highlighting, KaTeX math rendering, and the full conversation content — all embedded inline. You can open it in any browser without an internet connection, share it as an attachment, or archive it for long-term storage.
+
+## What the HTML export contains
+
+The file is built from a pre-designed template that faithfully mirrors the ChatGPT interface. It includes:
+
+- **Embedded CSS** — All styles are inlined so the file is portable. No external stylesheets are needed.
+- **Syntax-highlighted code blocks** — Code is highlighted using the same library as ChatGPT, preserving language-specific colors.
+- **KaTeX math rendering** — Mathematical formulas using LaTeX notation are rendered as proper typeset math via KaTeX.
+- **Images** — DALL·E generated images and uploaded images are included as `<img>` tags referencing their original asset URLs.
+- **User avatar** — If your ChatGPT account has a profile picture, it is embedded in the exported file's message headers.
+- **Dark and light mode** — The exported HTML detects the active color scheme at export time and applies the matching theme (dark or light) to the document.
+- **Optional metadata block** — If you have [Metadata](/features/metadata) fields configured, a collapsible `<details>` element at the top of the page displays all key/value pairs.
+
+## What the HTML export looks like
+
+The HTML export renders each turn in a card-like layout with an avatar on the left:
+
+- User messages appear with your profile picture (or a placeholder)
+- Assistant messages appear with the ChatGPT logo
+- Code blocks have a header bar showing the language and a copy button (hidden in the export)
+- Math formulas render inline and as display blocks using KaTeX
+
+<Tip>
+  The HTML export is the best format for sharing with someone who isn't technical. They only need a browser to open the file — no Markdown renderer, no special software.
+</Tip>
+
+## Dark and light mode
+
+The exporter reads the active color scheme from `document.documentElement.classList` at the moment you click **HTML**. If ChatGPT is in dark mode, the exported file uses a dark background. If it is in light mode, the exported file uses a light background. The theme is baked into the file and does not change when the reader opens it on a different device.
+
+## Timestamps
+
+When you enable timestamps in Settings, each message includes a `<time>` element with the ISO 8601 datetime and a human-readable tooltip:
+
+```html
+<time class="time" datetime="2024-01-15T14:30:00.000Z" title="1/15/2024, 2:30:00 PM">
+  02:30 PM
+</time>
+```
+
+<Note>
+  Timestamps are opt-in. Enable them in **Settings → Timestamp** and choose between 12-hour and 24-hour format. HTML timestamp display is controlled independently from the Markdown timestamp setting. See [Timestamps](/features/timestamps) for details.
+</Note>
+
+## Web-browsing citations
+
+The HTML exporter handles two citation styles from ChatGPT's web browsing feature:
+
+- **Old-style footnote markers** (`【11†(PrintWiki)】`) are silently removed from the output text — the citation marker disappears and no footnote list is added (unlike the Markdown exporter, which converts them to `[^n]` footnotes).
+- **New-style content references** (`citeturn1search1`) are replaced with inline Markdown links before being converted to HTML anchor tags.
+
+## Multimodal content
+
+- **DALL·E images** and **code execution output images** are rendered as `<img>` tags
+- **Uploaded images** are rendered as `<img>` tags referencing the asset pointer URL
+- **Audio transcriptions** appear in italicized, semi-transparent text
+- **Audio and video asset pointers** are omitted
+
+## Metadata block
+
+If you have configured [Metadata](/features/metadata) fields, the exported HTML includes a collapsible section at the top:
+
+```html
+<details>
+  <summary>Metadata</summary>
+  <div class="metadata_container">
+    <div class="metadata_item"><div>title</div><div>My Conversation</div></div>
+    <div class="metadata_item"><div>source</div><div>https://chatgpt.com/c/...</div></div>
+  </div>
+</details>
+```
+
+## Bulk export
+
+When using **Export All**, each conversation is exported as a separate `.html` file inside a ZIP archive. Duplicate file names are automatically disambiguated by appending a counter: `filename (2).html`.

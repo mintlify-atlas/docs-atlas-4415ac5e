@@ -1,0 +1,95 @@
+{
+  "projectType": "general",
+  "projectName": "ChatGPT Exporter",
+  "projectDescription": "A Tampermonkey userscript that adds export buttons to ChatGPT, letting you save conversations as Markdown, HTML, PNG, JSON, or plain text.",
+  "theme": "almond",
+  "primaryColor": "#0e2e67",
+  "lightColor": "#f0f6f8",
+  "darkColor": "#7d9ab5",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Export Formats",
+            "pages": [
+              "formats/overview",
+              "formats/markdown",
+              "formats/html",
+              "formats/json",
+              "formats/png",
+              "formats/text"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/bulk-export",
+              "features/timestamps",
+              "features/metadata",
+              "features/filename-format"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/settings",
+              "configuration/localization"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Contributing",
+        "groups": [
+          {
+            "group": "Development",
+            "pages": [
+              "contributing/setup",
+              "contributing/architecture",
+              "contributing/guidelines"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Export ChatGPT conversations to Markdown, HTML, PNG, JSON, and plain text",
+    "Bulk export multiple conversations at once with progress tracking",
+    "Export from official OpenAI export file (conversations.json)",
+    "Customizable filename format with dynamic variables",
+    "Conversation timestamps display (12h/24h)",
+    "Custom metadata/frontmatter for Markdown exports",
+    "TavernAI, SillyTavern, and Oobabooga (text-generation-webui) JSON formats",
+    "Multilingual interface (English, French, Indonesian, Korean, Turkish, Russian, Japanese, Chinese)",
+    "Project/GPT filtering for bulk export",
+    "Share page export support"
+  ],
+  "publicApiSurface": [
+    "exportToText()",
+    "exportToMarkdown(fileNameFormat, metaList)",
+    "exportToHtml(fileNameFormat, metaList)",
+    "exportToPng(fileNameFormat)",
+    "exportToJson(fileNameFormat)",
+    "exportToTavern(fileNameFormat)",
+    "exportToOoba(fileNameFormat)",
+    "exportAllToMarkdown(fileNameFormat, apiConversations, metaList?, projectName?)",
+    "exportAllToHtml(fileNameFormat, apiConversations, metaList?, projectName?)",
+    "exportAllToJson(fileNameFormat, apiConversations, metaList?, projectName?)",
+    "fetchConversation(chatId, shouldReplaceAssets)",
+    "fetchAllConversations(project?, maxConversations?, onBatch?)",
+    "processConversation(conversation)",
+    "archiveConversation(chatId)",
+    "deleteConversation(chatId)"
+  ]
+}

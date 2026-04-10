@@ -1,80 +1,75 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Export Your First ChatGPT Conversation in 5 Minutes"
+description: "Learn how to export a single ChatGPT conversation as Markdown, HTML, PNG, JSON, or plain text using the ChatGPT Exporter userscript in just a few clicks."
 ---
 
-## Get started in three steps
+Once ChatGPT Exporter is installed, exporting a conversation takes seconds. This guide walks you through your first export — from opening a conversation to downloading the file. If you haven't installed the script yet, start with the [Installation guide](/installation).
 
-Get your documentation site running locally and make your first customization.
+## Export a single conversation
 
-### Step 1: Set up your local environment
+<Steps>
+  <Step title="Open a conversation in ChatGPT">
+    Navigate to [chatgpt.com](https://chatgpt.com) and open any conversation from the sidebar. The conversation must have at least one message for the export to work.
+  </Step>
+  <Step title="Click the Export button">
+    In the left sidebar, look for the **Export** item (with an arrow-out icon) near the bottom of the navigation. Click it to open the export menu.
+  </Step>
+  <Step title="Choose your format">
+    The export menu shows all available options:
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+    - **Copy Text** — copies the conversation as plain text to your clipboard
+    - **Screenshot** — saves a PNG image of the conversation
+    - **Markdown** — downloads a `.md` file
+    - **HTML** — downloads a self-contained `.html` file
+    - **JSON** — opens a sub-menu with OpenAI format, TavernAI JSONL, and Ooba options
+    - **Export All** — opens the bulk export dialog
 
-### Step 2: Deploy your changes
+    Click the format you want.
+  </Step>
+  <Step title="File downloads automatically">
+    For file-based formats (Markdown, HTML, JSON, PNG), the file downloads to your browser's default downloads folder immediately. For **Copy Text**, the conversation is copied to your clipboard — no file is created.
+  </Step>
+</Steps>
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+<Tip>
+  The default filename uses your conversation title and export date. You can customize the filename pattern in **Settings** — see [Filename Format](/features/filename-format) for details.
+</Tip>
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+## Export as a screenshot (PNG)
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+The **Screenshot** option captures the full conversation as rendered by your browser.
 
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+<Steps>
+  <Step title="Open the conversation you want to capture">
+    Make sure the conversation is fully loaded in the browser.
+  </Step>
+  <Step title="Click Screenshot in the export menu">
+    The script temporarily adjusts styles to ensure clean rendering, then uses `html2canvas` to capture the conversation thread.
+  </Step>
+  <Step title="PNG downloads to your downloads folder">
+    The PNG is saved with your configured filename format. The image reflects the current dark or light mode of your ChatGPT interface.
+  </Step>
+</Steps>
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  The PNG export captures the conversation as rendered in the browser DOM. Very long conversations are captured in full — not just the visible portion.
 </Note>
+
+## Customize your exports
+
+After your first export, explore these features to get more out of ChatGPT Exporter:
+
+<CardGroup cols={2}>
+  <Card title="Bulk Export" icon="layer-group" href="/features/bulk-export">
+    Export many conversations at once — filter by project, select specific chats, and download as a ZIP.
+  </Card>
+  <Card title="Export Formats" icon="file-export" href="/formats/overview">
+    Learn what each format preserves — code blocks, math, images, and citations.
+  </Card>
+  <Card title="Timestamps" icon="clock" href="/features/timestamps">
+    Show message send times in your exports and in the ChatGPT UI.
+  </Card>
+  <Card title="Settings" icon="gear" href="/configuration/settings">
+    Configure filename patterns, metadata, language, and more.
+  </Card>
+</CardGroup>

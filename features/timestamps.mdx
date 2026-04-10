@@ -1,0 +1,86 @@
+---
+title: "Show Per-Message Timestamps in Exports and the UI"
+description: "Display when each message was sent — in the ChatGPT UI and optionally inside Markdown and HTML exports — using 12-hour or 24-hour format."
+---
+
+The timestamp feature adds the send time of each message directly beneath it, both in the ChatGPT interface and in your exported files. Because the ChatGPT API stores a `create_time` value for every message, ChatGPT Exporter can surface this data wherever it is useful — in the live conversation view, in HTML exports, and in Markdown exports.
+
+## Enabling timestamps
+
+<Steps>
+  <Step title="Open Settings">
+    Click the **Settings** button in the ChatGPT Exporter menu to open the **Exporter Settings** dialog.
+  </Step>
+  <Step title="Turn on Conversation Timestamp">
+    Toggle the **Conversation Timestamp** switch to the on position. Three additional options appear beneath it.
+  </Step>
+  <Step title="Configure format and export targets">
+    Choose your preferred options:
+
+    - **Use 24-hour format** — when off, times display as `08:12 PM`; when on, times display as `20:12`.
+    - **Enable on HTML** — includes the timestamp in HTML exports.
+    - **Enable on Markdown** — includes the timestamp in Markdown exports as a `<time>` HTML element.
+  </Step>
+  <Step title="Save">
+    Click **Save** to close the dialog. Your preferences are stored in the userscript's local storage and persist across sessions.
+  </Step>
+</Steps>
+
+## Display formats
+
+<Tabs>
+  <Tab title="12-hour (default)">
+    Times appear in AM/PM format. For example, a message sent at 8:12 in the evening displays as:
+
+    ```
+    08:12 PM
+    ```
+  </Tab>
+  <Tab title="24-hour">
+    Times appear on a 24-hour clock. The same message displays as:
+
+    ```
+    20:12
+    ```
+  </Tab>
+</Tabs>
+
+## How timestamps appear in exports
+
+### HTML export
+
+When **Enable on HTML** is active, a `<time>` element is rendered below each message bubble in the exported HTML file. The element carries machine-readable metadata:
+
+```html
+<time class="time" datetime="2024-01-15T20:12:00.000Z" title="1/15/2024, 8:12:00 PM">
+  08:12 PM
+</time>
+```
+
+The `datetime` attribute uses ISO 8601 format, and the `title` attribute shows the full localized date and time on hover.
+
+### Markdown export
+
+When **Enable on Markdown** is active, the same `<time>` element is embedded as an inline HTML block directly before the message content:
+
+```markdown
+#### ChatGPT:
+<time datetime="2024-01-15T20:12:00.000Z" title="1/15/2024, 8:12:00 PM">08:12 PM</time>
+
+Here is the response content...
+```
+
+<Note>
+  The `<time>` element in Markdown is valid HTML and renders correctly in most Markdown processors that allow inline HTML. Plain-text Markdown renderers that strip HTML will simply omit the timestamp.
+</Note>
+
+## Storage keys
+
+Timestamp preferences are persisted using the following keys in userscript storage:
+
+| Key | Purpose |
+|-----|---------|
+| `exporter:enable_timestamp` | Master toggle for timestamp display |
+| `exporter:timestamp_24h` | Selects 24-hour vs. 12-hour format |
+| `exporter:timestamp_markdown` | Enables timestamps in Markdown exports |
+| `exporter:timestamp_html` | Enables timestamps in HTML exports |

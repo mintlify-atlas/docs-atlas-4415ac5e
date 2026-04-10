@@ -1,0 +1,70 @@
+---
+title: "Plain Text Export: Copy Your Conversation to Clipboard"
+description: "Copy a ChatGPT conversation to your clipboard as plain text with simple You:/ChatGPT: speaker labels, ready to paste into any app."
+---
+
+The plain text export copies the entire conversation to your clipboard in a minimal, human-readable format. It does not download a file — instead, it immediately writes the text to the clipboard so you can paste it into an email, a document, a chat message, or any other application. It is the quickest way to get the words out of ChatGPT and into wherever you need them.
+
+## Output format
+
+Each message turn is rendered as a speaker label followed by a newline and the message content, with a blank line separating turns:
+
+```
+You:
+I'm creating a ChatGPT Exporter. What do you think?
+
+ChatGPT:
+It sounds like you're planning on creating a tool that uses the ChatGPT model
+to export text. ChatGPT is a large language model trained by OpenAI that is
+designed to generate human-like text responses based on a given input. It can
+be used for a variety of applications, such as chatbots, automated responses
+to customer inquiries, and more.
+```
+
+Speaker labels follow the same convention as all other formats:
+
+- `You:` — your messages
+- `ChatGPT:` — assistant responses
+- `Plugin (name):` — tool output (DALL·E images, code execution results)
+
+## Formatting and markdown
+
+Because the output is plain text, Markdown formatting is stripped before copying:
+
+- **Bold** and *italic* markers are removed; the wrapped text is kept
+- Code blocks lose their fences but the code text itself is preserved
+- LaTeX math formulas are kept as-is in their original notation (e.g., `$x = \frac{-b}{2a}$`)
+- Web-browsing citations use their display text (links are not included — they would not be clickable in plain text)
+- Old-style footnote citation markers (e.g., `【11†(PrintWiki)】`) are removed silently
+
+## Images and multimodal content
+
+Images are not included in the text output. They are replaced with the placeholder `[image]`:
+
+```
+ChatGPT:
+Here is your generated image:
+[image]
+```
+
+Audio transcriptions appear as `[audio] transcribed text`. Audio and video asset pointers are omitted entirely.
+
+## No file download
+
+Unlike every other format, the text export does **not** create a file. Clicking **Copy Text** writes directly to `navigator.clipboard`. A brief **Copied!** confirmation label appears on the button to confirm success.
+
+<Note>
+  Clipboard access requires browser permission. If the page does not have clipboard write permission, the copy will silently fail. This is uncommon in modern browsers when the page is in focus.
+</Note>
+
+## When to use plain text
+
+Plain text is the right choice when:
+
+- You want to paste a conversation into a tool that doesn't support Markdown (e.g., a plain email, Slack, or a form field)
+- You want the content without any markup or metadata overhead
+- You need something fast and don't want to manage a downloaded file
+
+<Tip>
+  If you need to keep formatting like code blocks and headings, use the [Markdown](/formats/markdown) export instead. If you want a portable, shareable document, use the [HTML](/formats/html) export.
+</Tip>
